@@ -9,6 +9,7 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
 )
+import matplotlib.pyplot as plt
 
 uvloop.install()
 app = Client(
