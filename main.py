@@ -54,18 +54,37 @@ async def show_top_today(_, message: Message):
     t = "🔰 **Today's Top Users :**\n\n"
 
     pos = 1
+    user_names = []
+    user_counts = []
     for i, k in sorted(chat[today].items(), key=lambda x: x[1], reverse=True)[:10]:
         i = await get_name(app, i)
 
         t += f"**{pos}.** {i} - {k}\n"
+        user_names.append(i)
+        user_counts.append(k)
         pos += 1
 
-    await message.reply_text(
-        t,
+    # Create the bar graph
+    fig, ax = plt.subplots()
+    ax.bar(user_names, user_counts)
+    ax.set_title("Top Users Today")
+    ax.set_xlabel("Users")
+    ax.set_ylabel("Counts")
+
+    # Save the graph to a buffer
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format="png")
+    buffer.seek(0)
+
+    # Send the graph as a photo with the caption
+    await message.reply_photo(
+        photo=buffer,
+        caption=t,
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("Overall Ranking", callback_data="overall")]]
         ),
     )
+
 
 
 @app.on_callback_query(filters.regex("overall"))
@@ -129,13 +148,26 @@ async def show_top_today_callback(_, query: CallbackQuery):
         t += f"**{pos}.** {i} - {k}\n"
         pos += 1
 
-    await query.message.edit_text(
-        t,
+     # Create the bar graph
+    fig, ax = plt.subplots()
+    ax.bar(user_names, user_counts)
+    ax.set_title("Overall Top Users")
+    ax.set_xlabel("Users")
+    ax.set_ylabel("Counts")
+
+    # Save the graph to a buffer
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format="png")
+    buffer.seek(0)
+
+    # Send the graph as a photo with the caption
+    await query.message.edit_photo(
+        photo=buffer,
+        caption=t,
         reply_markup=InlineKeyboardMarkup(
-            [[InlineKeyboardButton("Overall Ranking", callback_data="overall")]]
+            [[InlineKeyboardButton("Today's Ranking", callback_data="today")]]
         ),
     )
-
 
 print("started")
 app.run()
