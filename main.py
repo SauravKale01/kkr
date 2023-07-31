@@ -146,6 +146,14 @@ async def show_top_today_callback(_, query: CallbackQuery):
     pos = 1
     user_names = []  # Fetch user names again
     user_counts = []  # Fetch user counts again
+    for user_id, count in sorted(chat[today].items(), key=lambda x: x[1], reverse=True)[:10]:
+        user_name = await get_name(app, user_id)
+        t += f"**{pos}.** {user_name} - {count}\n"
+        user_names.append(user_name)
+        user_counts.append(count)
+        pos += 1
+    user_names = []  # Fetch user names again
+    user_counts = []  # Fetch user counts again
     for i, k in sorted(chat[today].items(), key=lambda x: x[1], reverse=True)[:10]:
         i = await get_name(app, i)
 
