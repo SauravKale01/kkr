@@ -144,16 +144,20 @@ async def show_top_today_callback(_, query: CallbackQuery):
     t = "🔰 **Today's Top Users :**\n\n"
 
     pos = 1
+    user_names = []  # Fetch user names again
+    user_counts = []  # Fetch user counts again
     for i, k in sorted(chat[today].items(), key=lambda x: x[1], reverse=True)[:10]:
         i = await get_name(app, i)
 
         t += f"**{pos}.** {i} - {k}\n"
+        user_names.append(i)
+        user_counts.append(k)
         pos += 1
 
-     # Create the bar graph
+    # Create the bar graph
     fig, ax = plt.subplots()
     ax.bar(user_names, user_counts)
-    ax.set_title("Overall Top Users")
+    ax.set_title("Top Users Today")
     ax.set_xlabel("Users")
     ax.set_ylabel("Counts")
 
@@ -167,7 +171,7 @@ async def show_top_today_callback(_, query: CallbackQuery):
         photo=buffer,
         caption=t,
         reply_markup=InlineKeyboardMarkup(
-            [[InlineKeyboardButton("Today's Ranking", callback_data="today")]]
+            [[InlineKeyboardButton("Overall Ranking", callback_data="overall")]]
         ),
     )
 
