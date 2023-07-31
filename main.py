@@ -21,7 +21,7 @@ app = Client(
     "boto",
     api_id="19099900",
     api_hash="2b445de78e5baf012a0793e60bd4fbf5",
-    bot_token="6206599982:AAFhXRwC0SnPCBK4WDwzdz7TbTsM2hccgZc",
+    bot_token="6330964987:AAGGGM2iz-2hTmZLkiigTQgTCHMPePRC6AY",
 )
 
 
@@ -35,7 +35,7 @@ app = Client(
 async def inc_user(_, message: Message):
     if message.text:
         if (
-            message.text.strip() == "/top@RankingssBot"
+            message.text.strip() == "/top@MadaraUchiha_xBot"
             or message.text.strip() == "/top"
         ):
             return await show_top_today(_, message)
