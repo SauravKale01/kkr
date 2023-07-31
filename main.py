@@ -14,6 +14,7 @@ import io
 import seaborn as sns
 import schedule
 import time
+import asyncio  
 
 uvloop.install()
 app = Client(
