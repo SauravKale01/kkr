@@ -112,13 +112,16 @@ async def show_top_overall_callback(_, query: CallbackQuery):
                 overall_dict[j] += l
 
     pos = 1
-    for i, k in sorted(overall_dict.items(), key=lambda x: x[1], reverse=True)[:10]:
-        i = await get_name(app, i)
-
-        t += f"**{pos}.** {i} - {k}\n"
+    user_names = []  # Fetch user names again
+    user_counts = []  # Fetch user counts again
+    for user_id, count in sorted(overall_dict.items(), key=lambda x: x[1], reverse=True)[:10]:
+        user_name = await get_name(app, user_id)
+        t += f"**{pos}.** {user_name} - {count}\n"
+        user_names.append(user_name)
+        user_counts.append(count)
         pos += 1
 
-   # Create the bar graph
+    # Create the bar graph
     fig, ax = plt.subplots()
     ax.bar(user_names, user_counts)
     ax.set_title("Overall Top Users")
@@ -130,14 +133,19 @@ async def show_top_overall_callback(_, query: CallbackQuery):
     plt.savefig(buffer, format="png")
     buffer.seek(0)
 
-    # Send the graph as a photo with the caption
-    await query.message.edit_photo(
+    # Delete the previous message
+    await query.message.delete()
+
+    # Send a new message with the updated photo and caption
+    await query.message.reply_photo(
         photo=buffer,
         caption=t,
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("Today's Ranking", callback_data="today")]]
         ),
     )
+
+
 @app.on_callback_query(filters.regex("today"))
 async def show_top_today_callback(_, query: CallbackQuery):
     print("today top in", query.message.chat.id)
