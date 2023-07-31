@@ -242,7 +242,7 @@ async def send_daily_message():
 
 # Schedule the daily message
 def schedule_daily_message():
-    schedule.every().day.at("01:31").do(asyncio.run, send_daily_message)
+    schedule.every().day.at("01:35").do(asyncio.run, send_daily_message)
 
 print("started")
 schedule_daily_message()
