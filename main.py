@@ -53,7 +53,7 @@ async def show_top_today(_, message: Message):
     if not chat.get(today):
         return await message.reply_text("no data available for today")
 
-    t = "🔰 **Today's Top Users :**\n\n"
+     t = "🔰 **Today's Top Users :**\n\n"
 
     pos = 1
     user_names = []
@@ -119,14 +119,26 @@ async def show_top_overall_callback(_, query: CallbackQuery):
         t += f"**{pos}.** {i} - {k}\n"
         pos += 1
 
-    await query.message.edit_text(
-        t,
+   # Create the bar graph
+    fig, ax = plt.subplots()
+    ax.bar(user_names, user_counts)
+    ax.set_title("Overall Top Users")
+    ax.set_xlabel("Users")
+    ax.set_ylabel("Counts")
+
+    # Save the graph to a buffer
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format="png")
+    buffer.seek(0)
+
+    # Send the graph as a photo with the caption
+    await query.message.edit_photo(
+        photo=buffer,
+        caption=t,
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("Today's Ranking", callback_data="today")]]
         ),
     )
-
-
 @app.on_callback_query(filters.regex("today"))
 async def show_top_today_callback(_, query: CallbackQuery):
     print("today top in", query.message.chat.id)
