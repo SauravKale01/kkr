@@ -89,6 +89,7 @@ async def show_top_today(_, message: Message):
     )
 
 
+# Modify the show_top_overall_callback function
 @app.on_callback_query(filters.regex("overall"))
 async def show_top_overall_callback(_, query: CallbackQuery):
     print("overall top in", query.message.chat.id)
@@ -122,12 +123,21 @@ async def show_top_overall_callback(_, query: CallbackQuery):
         user_counts.append(count)
         pos += 1
 
-    # Create the bar graph
-    fig, ax = plt.subplots()
-    ax.bar(user_names, user_counts)
-    ax.set_title("Overall Top Users")
-    ax.set_xlabel("Users")
-    ax.set_ylabel("Counts")
+    # Use seaborn to style the plot
+    sns.set(style="whitegrid")
+    plt.figure(figsize=(10, 6))  # Adjust the figure size
+
+    # Create the horizontal bar chart (polar chart)
+    plt.barh(user_names, user_counts, color="lightcoral")
+
+    # Add labels and title
+    plt.xlabel("Message Count")
+    plt.ylabel("Users")
+    plt.title("Overall Top Users - Message Counts")
+
+    # Add count labels to the poles
+    for index, value in enumerate(user_counts):
+        plt.text(value, index, str(value), ha="left", va="center", color="black", fontweight='bold')
 
     # Save the graph to a buffer
     buffer = io.BytesIO()
@@ -169,7 +179,7 @@ async def show_top_today_callback(_, query: CallbackQuery):
     user_counts = []  # Fetch user counts again
     for user_id, count in sorted(chat[today].items(), key=lambda x: x[1], reverse=True)[:10]:
         user_name = await get_name(app, user_id)
-        t += f"**{pos}.** {user_name} - {count} messages\n"
+        t += f"**{pos}.** {user_name} - {count}\n"
         user_names.append(user_name)
         user_counts.append(count)
         pos += 1
