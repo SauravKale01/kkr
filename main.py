@@ -67,12 +67,13 @@ async def show_top_today(_, message: Message):
         user_counts.append(k)
         pos += 1
 
-    # Create the bar graph
-    fig, ax = plt.subplots()
-    ax.bar(user_names, user_counts)
-    ax.set_title("Top Users Today")
-    ax.set_xlabel("Users")
-    ax.set_ylabel("Counts")
+    # Create the bar graph using seaborn and matplotlib
+    plt.figure(figsize=(10, 6))
+    sns.set_theme(style="whitegrid")
+    sns.barplot(x=user_counts, y=user_names, palette="viridis")
+    plt.title("Top Users Today", fontsize=16)
+    plt.xlabel("Counts", fontsize=14)
+    plt.ylabel("Users", fontsize=14)
 
     # Save the graph to a buffer
     buffer = io.BytesIO()
@@ -87,7 +88,6 @@ async def show_top_today(_, message: Message):
             [[InlineKeyboardButton("Overall Ranking", callback_data="overall")]]
         ),
     )
-
 
 # Modify the show_top_overall_callback function
 @app.on_callback_query(filters.regex("overall"))
