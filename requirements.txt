@@ -5,3 +5,4 @@ tgcrypto
 uvloop
 matplotlib
 seaborn
+schedule
