@@ -11,6 +11,7 @@ from pyrogram.types import (
 )
 import matplotlib.pyplot as plt
 import io 
+import seaborn as sns
 
 uvloop.install()
 app = Client(
@@ -146,6 +147,7 @@ async def show_top_overall_callback(_, query: CallbackQuery):
     )
 
 
+# Modify the show_top_today_callback function
 @app.on_callback_query(filters.regex("today"))
 async def show_top_today_callback(_, query: CallbackQuery):
     print("today top in", query.message.chat.id)
@@ -167,26 +169,26 @@ async def show_top_today_callback(_, query: CallbackQuery):
     user_counts = []  # Fetch user counts again
     for user_id, count in sorted(chat[today].items(), key=lambda x: x[1], reverse=True)[:10]:
         user_name = await get_name(app, user_id)
-        t += f"**{pos}.** {user_name} - {count}\n"
+        t += f"**{pos}.** {user_name} - {count} messages\n"
         user_names.append(user_name)
         user_counts.append(count)
         pos += 1
-    user_names = []  # Fetch user names again
-    user_counts = []  # Fetch user counts again
-    for i, k in sorted(chat[today].items(), key=lambda x: x[1], reverse=True)[:10]:
-        i = await get_name(app, i)
 
-        t += f"**{pos}.** {i} - {k}\n"
-        user_names.append(i)
-        user_counts.append(k)
-        pos += 1
+    # Use seaborn to style the plot
+    sns.set(style="whitegrid")
+    plt.figure(figsize=(10, 6))  # Adjust the figure size
 
-    # Create the bar graph
-    fig, ax = plt.subplots()
-    ax.bar(user_names, user_counts)
-    ax.set_title("Top Users Today")
-    ax.set_xlabel("Users")
-    ax.set_ylabel("Counts")
+    # Create the horizontal bar chart (polar chart)
+    plt.barh(user_names, user_counts, color="skyblue")
+
+    # Add labels and title
+    plt.xlabel("Message Count")
+    plt.ylabel("Users")
+    plt.title("Top Users Today - Message Counts")
+
+    # Add count labels to the poles
+    for index, value in enumerate(user_counts):
+        plt.text(value, index, str(value), ha="left", va="center", color="black", fontweight='bold')
 
     # Save the graph to a buffer
     buffer = io.BytesIO()
@@ -204,7 +206,6 @@ async def show_top_today_callback(_, query: CallbackQuery):
             [[InlineKeyboardButton("Overall Ranking", callback_data="overall")]]
         ),
     )
-
 
 print("started")
 app.run()
