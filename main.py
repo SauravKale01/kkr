@@ -217,5 +217,31 @@ async def show_top_today_callback(_, query: CallbackQuery):
         ),
     )
 
+
+# Helper function to send the daily message
+async def send_daily_message():
+    for chat_id in chatdb.distinct("chat"):
+        t_data = await show_top_today(chat_id)
+        if t_data:
+            t, user_names, user_counts = t_data
+            buffer = create_bar_graph(
+                user_names, user_counts, "Top Users Today", "Users", "Counts"
+            )
+            await app.send_photo(
+                chat_id=chat_id,
+                photo=buffer,
+                caption=t,
+                reply_markup=InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("Overall Ranking", callback_data="overall")]]
+                ),
+            )
+
+
+# Schedule the daily message
+def schedule_daily_message():
+    schedule.every().day.at("01:31").do(asyncio.run, send_daily_message)
+
 print("started")
+schedule_daily_message()
 app.run()
+
