@@ -166,14 +166,18 @@ async def show_top_today_callback(_, query: CallbackQuery):
     plt.savefig(buffer, format="png")
     buffer.seek(0)
 
-    # Send the graph as a photo with the caption
-    await query.message.edit_photo(
+    # Delete the previous message
+    await query.message.delete()
+
+    # Send a new message with the updated photo and caption
+    await query.message.reply_photo(
         photo=buffer,
         caption=t,
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("Overall Ranking", callback_data="overall")]]
         ),
     )
+
 
 print("started")
 app.run()
