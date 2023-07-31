@@ -53,7 +53,7 @@ async def show_top_today(_, message: Message):
     if not chat.get(today):
         return await message.reply_text("no data available for today")
 
-     t = "🔰 **Today's Top Users :**\n\n"
+    t = "🔰 **Today's Top Users :**\n\n"
 
     pos = 1
     user_names = []
@@ -86,7 +86,6 @@ async def show_top_today(_, message: Message):
             [[InlineKeyboardButton("Overall Ranking", callback_data="overall")]]
         ),
     )
-
 
 
 @app.on_callback_query(filters.regex("overall"))
